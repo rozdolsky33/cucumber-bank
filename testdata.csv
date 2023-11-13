@@ -1,0 +1,4 @@
+balance,deposit,expectedBalance,fee,expectedAvailableBalance
+500,100,600,50,550
+1000,200,1200,30,1170
+2000,500,2500,100,2400

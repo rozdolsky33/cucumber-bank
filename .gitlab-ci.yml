@@ -1,0 +1,22 @@
+stages:
+  - build
+  - test
+
+image: openjdk:17-alpine
+
+Build Artifact:
+  stage: build
+  script:
+    - ./mvnw install
+  artifacts:
+    paths:
+      - ./target/*.jar
+
+Cucumber Report:
+  stage: test
+  script:
+    - ./mvnw test
+  artifacts:
+    when: always
+    paths:
+      - target/cucumber-report.html
