@@ -35,7 +35,8 @@ jobs:
       - name: Install dependencies
         run: ./mvnw install |
           mkdir -p ${{ github.workspace }}/upload/
-          cp ${{ github.workspace }}/target/cucumber-report.html ${{ github.workspace }}/upload/
+          mv ${{ github.workspace }}/target/cucumber-report.html ${{ github.workspace }}/target/index.html
+          cp ${{ github.workspace }}/target/index.html ${{ github.workspace }}/upload/
       - name: Upload S3
         uses: shallwefootball/s3-upload-action@master
         id: s3
@@ -50,7 +51,7 @@ jobs:
         uses: chrnorm/deployment-status@releases/v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          target_url: https://cucumber-bank-reports.s3.us-east-1.amazonaws.com/${{steps.S3.outputs.object_key}}/cucumber-report.html
+          target_url: https://cucumber-bank-reports.s3.us-east-1.amazonaws.com/${{steps.S3.outputs.object_key}}/index.html
           state: 'success'
           deployment_id: ${{ steps.test.outputs.deployment_id }}
 
