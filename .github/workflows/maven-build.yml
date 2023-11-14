@@ -55,5 +55,14 @@ jobs:
           state: 'success'
           deployment_id: ${{ steps.test.outputs.deployment_id }}
 
-      - name: Link to report
-        run: echo "https://cucumber-bank-reports.s3.us-east-1.amazonaws.com/${{steps.S3.outputs.object_key}}/cucumber-report.html"
+      - name: Configure AWS credentials from Test account
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+      - name: Copy files to the test website with the AWS CLI
+        with:
+          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws s3 cp ${{ github.workspace }}/upload/index.html s3://cucumber-bank-reports/index.html
