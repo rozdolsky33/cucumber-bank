@@ -14,8 +14,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ ubuntu-latest]
-        version: [17]
+        os: [ubuntu-latest]
+        version: [17, 21]
     name: 'Build Maven Java'
     steps:
       - uses: actions/checkout@v4
