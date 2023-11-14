@@ -37,4 +37,4 @@ jobs:
           aws_bucket: cucumber-bank-reports
           source_dir: ${{ github.workspace }}/upload/
       - name: Link to report
-        run: echo "https://cucumber-bank-reports.s3.us-east-1.amazonaws.com/${{steps.s3.outputs.object_key}}/cucumber-report.html"
+        run: echo "https://cucumber-bank-reports.s3.us-east-1.amazonaws.com/cucumber-report.html"
