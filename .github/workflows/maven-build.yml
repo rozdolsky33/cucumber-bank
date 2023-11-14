@@ -29,15 +29,6 @@ jobs:
         run: ./mvnw install |
           mkdir -p ${{ github.workspace }}/upload/
           cp ${{ github.workspace }}/target/cucumber-report.html ${{ github.workspace }}/upload/
-      - name: Test
-        run: ./mvnw verify
-      - name: Upload target folder
-        uses: actions/upload-artifact@v2
-        with:
-          name: target
-          path: |
-            ${{ github.workspace }}/target
-
       - name: Upload S3
         uses: shallwefootball/s3-upload-action@master
         id: s3
