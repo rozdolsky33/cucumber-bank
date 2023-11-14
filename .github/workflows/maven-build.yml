@@ -36,7 +36,7 @@ jobs:
           path: |
             ${{ github.workspace }}/target
       - name: Upload S3
-        uses: shallwefootball/s3-upload-action@main
+        uses: shallwefootball/s3-upload-action@master
         id: s3
         with:
           aws_key_id: ${{ secrets.AWS_KEY_ID }}
