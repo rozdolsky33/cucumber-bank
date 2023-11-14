@@ -36,5 +36,15 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_bucket: cucumber-bank-reports
           source_dir: ${{ github.workspace }}/upload/
+
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@releases/v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target_url: https://cucumber-bank-reports.s3.us-east-1.amazonaws.com/${{steps.S3.outputs.object_key}}/cucumber-report.html
+          state: 'success'
+          deployment_id: ${{ steps.test.outputs.deployment_id }}
+
       - name: Link to report
-        run: echo "https://cucumber-bank-reports.s3.us-east-1.amazonaws.com/cucumber-report.html"
+        run: echo "https://cucumber-bank-reports.s3.us-east-1.amazonaws.com/${{steps.S3.outputs.object_key}}/cucumber-report.html"
