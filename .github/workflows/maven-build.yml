@@ -59,11 +59,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
-      - name: Copy files to the test website with the AWS CLI
-        with:
-          aws-region: us-east-1
           aws-access-key-id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - name: copy files
         run: |
           aws s3 cp ${{ github.workspace }}/upload/index.html s3://cucumber-bank-reports/index.html
