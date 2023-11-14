@@ -33,34 +33,51 @@ jobs:
           java-version: ${{ matrix.version }}
           cache: 'maven'
       - name: Install dependencies
-        run: ./mvnw install |
-          mkdir -p ${{ github.workspace }}/upload/
-          mv ${{ github.workspace }}/target/cucumber-report.html ${{ github.workspace }}/target/index.html
-          cp ${{ github.workspace }}/target/index.html ${{ github.workspace }}/upload/
-      - name: Upload S3
-        uses: shallwefootball/s3-upload-action@master
-        id: s3
+        run: ./mvnw install
+  qodana:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+    steps:
+      - uses: actions/checkout@v3
         with:
-          aws_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_bucket: cucumber-bank-reports
-          source_dir: ${{ github.workspace }}/upload/
+          ref: ${{ github.event.pull_request.head.sha }}  # to check out the actual pull request commit, not the merge commit
+          fetch-depth: 0  # a full history is required for pull request analysis
+      - name: 'Qodana Scan'
+        uses: JetBrains/qodana-action@v2023.2
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
 
-      - name: Update deployment status (success)
-        if: success()
-        uses: chrnorm/deployment-status@releases/v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          target_url: https://cucumber-bank-reports.s3.us-east-1.amazonaws.com/${{steps.S3.outputs.object_key}}/index.html
-          state: 'success'
-          deployment_id: ${{ steps.test.outputs.deployment_id }}
 
-      - name: Configure AWS credentials from Test account
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: copy to s3
-        run: |
-          aws s3 cp ${{ github.workspace }}/upload/index.html s3://cucumber-bank-reports/index.html
+#        mkdir -p ${{ github.workspace }}/upload/
+#        mv ${{ github.workspace }}/target/cucumber-report.html ${{ github.workspace }}/target/index.html
+#        cp ${{ github.workspace }}/target/index.html ${{ github.workspace }}/upload/
+#      - name: Upload S3
+#        uses: shallwefootball/s3-upload-action@master
+#        id: s3
+#        with:
+#          aws_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws_bucket: cucumber-bank-reports
+#          source_dir: ${{ github.workspace }}/upload/
+#
+#      - name: Update deployment status (success)
+#        if: success()
+#        uses: chrnorm/deployment-status@releases/v1
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          target_url: https://cucumber-bank-reports.s3.us-east-1.amazonaws.com/${{steps.S3.outputs.object_key}}/index.html
+#          state: 'success'
+#          deployment_id: ${{ steps.test.outputs.deployment_id }}
+#
+#      - name: Configure AWS credentials from Test account
+#        uses: aws-actions/configure-aws-credentials@v4
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+#      - name: copy to s3
+#        run: |
+#          aws s3 cp ${{ github.workspace }}/upload/index.html s3://cucumber-bank-reports/index.html
