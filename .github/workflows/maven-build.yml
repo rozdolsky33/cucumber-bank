@@ -41,7 +41,7 @@ jobs:
         uses: shallwefootball/s3-upload-action@master
         id: s3
         with:
-          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_bucket: cucumber-bank-reports
           source_dir: ${{ github.workspace }}/upload/
@@ -58,9 +58,9 @@ jobs:
       - name: Configure AWS credentials from Test account
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: us-east-1
-          aws-access-key-id: ${{ secrets.AWS_KEY_ID }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
       - name: copy
         run: |
           aws s3 cp ${{ github.workspace }}/upload/index.html s3://cucumber-bank-reports/index.html
