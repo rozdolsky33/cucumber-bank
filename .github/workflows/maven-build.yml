@@ -26,7 +26,9 @@ jobs:
           java-version: ${{ matrix.version }}
           cache: 'maven'
       - name: Install dependencies
-        run: ./mvnw install --show-version
+        run: ./mvnw install |
+          mkdir -p ${{ github.workspace }}/upload/
+          cp ${{ github.workspace }}/target/cucumber-report.html ${{ github.workspace }}/upload/
       - name: Test
         run: ./mvnw verify
       - name: Upload target folder
@@ -35,6 +37,7 @@ jobs:
           name: target
           path: |
             ${{ github.workspace }}/target
+
       - name: Upload S3
         uses: shallwefootball/s3-upload-action@master
         id: s3
@@ -42,6 +45,6 @@ jobs:
           aws_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_bucket: cucumber-bank-reports
-          source_dir: ${{ github.workspace }}/target/
+          source_dir: ${{ github.workspace }}/upload/
       - name: Link to report
         run: echo "https://cucumber-bank-reports.s3.us-east-1.amazonaws.com/${{steps.s3.outputs.object_key}}/index.html"
