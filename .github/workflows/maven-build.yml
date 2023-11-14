@@ -61,6 +61,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - name: copy
+      - name: copy to s3
         run: |
           aws s3 cp ${{ github.workspace }}/upload/index.html s3://cucumber-bank-reports/index.html
