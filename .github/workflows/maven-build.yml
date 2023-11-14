@@ -15,9 +15,8 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest]
-        version: [ 17, 21 ]
-    name: 'Build Java ${{ matrix.version }} - ${{ matrix.os }}'
-    runs-on: ${{ matrix.os }}
+        version: [17]
+    name: 'Build Maven Java'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v3
@@ -42,6 +41,6 @@ jobs:
           aws_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_bucket: cucumber-bank-reports
-          source_dir: /home/runner/work/cucumber-bank/cucumber-bank/target/cucumber-report.html
+          source_dir: ${{ github.workspace }}/target/cucumber-report.html
       - name: Link to report
         run: echo "https://cucumber-bank-reports.s3.us-east-1.amazonaws.com/${{steps.s3.outputs.object_key}}/index.html"
