@@ -29,3 +29,19 @@ jobs:
         run: ./mvnw install --show-version
       - name: Test
         run: ./mvnw verify
+      - name: Upload target folder
+        uses: actions/upload-artifact@v2
+        with:
+          name: target
+          path: |
+            ${{ github.workspace }}/target
+      - name: Upload S3
+        uses: shallwefootball/s3-upload-action@main
+        id: s3
+        with:
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_bucket: cucumber-bank-reports
+          source_dir: target/cucumber-report.html
+      - name: Link to report
+        run: echo "https://cucumber-bank-reports.s3.us-east-1.amazonaws.com/${{steps.s3.outputs.object_key}}/index.html"
