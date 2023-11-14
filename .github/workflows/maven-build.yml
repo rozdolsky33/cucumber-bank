@@ -18,6 +18,14 @@ jobs:
     name: 'Build Maven Java'
     runs-on: ${{ matrix.os }}
     steps:
+      - uses: actions/checkout@master
+      - uses: chrnorm/deployment-action@releases/v1
+        name: Create GitHub deployment
+        id: test
+        with:
+          token: ${{ secrets.GITHUB_TOKEN}}
+          description: 'Preview my app'
+          environment: preview
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v3
         with:
